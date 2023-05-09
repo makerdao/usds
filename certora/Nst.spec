@@ -222,8 +222,8 @@ rule transferFrom(address from, address to, uint256 value) {
     assert from == to => balanceOfFromAfter == balanceOfFromBefore, "transferFrom did not keep unchanged balanceOf[from == to]";
     assert balanceOfOtherAfter == balanceOfOtherBefore, "transferFrom did not keep unchanged the rest of balanceOf[x]";
     assert e.msg.sender != from && allowanceFromSenderBefore != max_uint256 => allowanceFromSenderAfter == allowanceFromSenderBefore - value, "transferFrom did not decrease allowance[from][sender] by value";
-    assert e.msg.sender == from => allowanceFromSenderAfter == allowanceFromSenderBefore, "transferFrom did not keep unchanged allowance[from][sender] due to from == sender";
-    assert allowanceFromSenderBefore == max_uint256 => allowanceFromSenderAfter == allowanceFromSenderBefore, "transferFrom did not keep unchanged allowance[from][sender] due to max_uint256";
+    assert e.msg.sender == from => allowanceFromSenderAfter == allowanceFromSenderBefore, "transferFrom did not keep unchanged allowance[from][sender] when from == sender";
+    assert allowanceFromSenderBefore == max_uint256 => allowanceFromSenderAfter == allowanceFromSenderBefore, "transferFrom did not keep unchanged allowance[from][sender] when is max_uint256";
     assert allowanceOtherAfter == allowanceOtherBefore, "transferFrom did not keep unchanged the rest of allowance[x][y]";
     assert noncesAfter == noncesBefore, "transferFrom did not keep unchanged every nonces[x]";
 }
@@ -481,8 +481,8 @@ rule burn(address from, uint256 value) {
     assert balanceOfFromAfter == balanceOfFromBefore - value, "burn did not decrease balanceOf[from] by value";
     assert balanceOfOtherAfter == balanceOfOtherBefore, "burn did not keep unchanged the rest of balanceOf[x]";
     assert e.msg.sender != from && allowanceFromSenderBefore != max_uint256 => allowanceFromSenderAfter == allowanceFromSenderBefore - value, "burn did not decrease allowance[from][sender] by value";
-    assert e.msg.sender == from => allowanceFromSenderAfter == allowanceFromSenderBefore, "burn did not keep unchanged allowance[from][sender] due to from == sender";
-    assert allowanceFromSenderBefore == max_uint256 => allowanceFromSenderAfter == allowanceFromSenderBefore, "burn did not keep unchanged allowance[from][sender] due to max_uint256";
+    assert e.msg.sender == from => allowanceFromSenderAfter == allowanceFromSenderBefore, "burn did not keep unchanged allowance[from][sender] when from == sender";
+    assert allowanceFromSenderBefore == max_uint256 => allowanceFromSenderAfter == allowanceFromSenderBefore, "burn did not keep unchanged allowance[from][sender] when is max_uint256";
     assert allowanceOtherAfter == allowanceOtherBefore, "burn did not keep unchanged the rest of allowance[x][y]";
     assert noncesAfter == noncesBefore, "burn did not keep unchanged every nonces[x]";
 }
