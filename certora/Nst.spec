@@ -515,9 +515,37 @@ rule burn_revert(address from, uint256 value) {
 rule permitVRS(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) {
     env e;
 
+    address anyUsr;
+    address anyUsr2; address anyUsr3;
+    require anyUsr2 != owner || anyUsr3 != spender;
+    address other;
+    require other != owner;
+
+    mathint wardsBefore = wards(anyUsr);
+    mathint totalSupplyBefore = totalSupply();
+    mathint balanceOfBefore = balanceOf(anyUsr);
+    mathint allowanceOtherBefore = allowance(anyUsr2, anyUsr3);
+    mathint noncesOwnerBefore = nonces(owner);
+    mathint noncesOtherBefore = nonces(other);
+
     permit(e, owner, spender, value, deadline, v, r, s);
 
-    assert allowance(owner, spender) == value, "permit did not set the allowance as expected";
+    mathint wardsAfter = wards(anyUsr);
+    mathint totalSupplyAfter = totalSupply();
+    mathint balanceOfAfter = balanceOf(anyUsr);
+    mathint allowanceSpenderAfter = allowance(owner, spender);
+    mathint allowanceOtherAfter = allowance(anyUsr2, anyUsr3);
+    mathint noncesOwnerAfter = nonces(owner);
+    mathint noncesOtherAfter = nonces(other);
+
+    assert wardsAfter == wardsBefore, "permit did not keep unchanged wards";
+    assert totalSupplyAfter == totalSupplyBefore, "permit did not keep unchanged totalSupply";
+    assert balanceOfAfter == balanceOfBefore, "permit did not keep unchanged every balanceOf[x]";
+    assert allowanceSpenderAfter == to_mathint(value), "permit did not set allowance[owner][spender] to value";
+    assert allowanceOtherAfter == allowanceOtherBefore, "permit did not keep unchanged the rest of allowance[x][y]";
+    assert noncesOwnerBefore < max_uint256 => noncesOwnerAfter == noncesOwnerBefore + 1, "permit did not increase nonces[owner] by 1";
+    assert noncesOwnerBefore == max_uint256 => noncesOwnerAfter == 0, "permit did not set nonces[owner] back to 0";
+    assert noncesOtherAfter == noncesOtherBefore, "permit did not keep unchanged the rest of nonces[x]";
 }
 
 // Verify revert rules on permit
@@ -555,9 +583,37 @@ rule permitVRS_revert(address owner, address spender, uint256 value, uint256 dea
 rule permitSignature(address owner, address spender, uint256 value, uint256 deadline, bytes signature) {
     env e;
 
+    address anyUsr;
+    address anyUsr2; address anyUsr3;
+    require anyUsr2 != owner || anyUsr3 != spender;
+    address other;
+    require other != owner;
+
+    mathint wardsBefore = wards(anyUsr);
+    mathint totalSupplyBefore = totalSupply();
+    mathint balanceOfBefore = balanceOf(anyUsr);
+    mathint allowanceOtherBefore = allowance(anyUsr2, anyUsr3);
+    mathint noncesOwnerBefore = nonces(owner);
+    mathint noncesOtherBefore = nonces(other);
+
     permit(e, owner, spender, value, deadline, signature);
 
-    assert allowance(owner, spender) == value, "permit did not set the allowance as expected";
+    mathint wardsAfter = wards(anyUsr);
+    mathint totalSupplyAfter = totalSupply();
+    mathint balanceOfAfter = balanceOf(anyUsr);
+    mathint allowanceSpenderAfter = allowance(owner, spender);
+    mathint allowanceOtherAfter = allowance(anyUsr2, anyUsr3);
+    mathint noncesOwnerAfter = nonces(owner);
+    mathint noncesOtherAfter = nonces(other);
+
+    assert wardsAfter == wardsBefore, "permit did not keep unchanged wards";
+    assert totalSupplyAfter == totalSupplyBefore, "permit did not keep unchanged totalSupply";
+    assert balanceOfAfter == balanceOfBefore, "permit did not keep unchanged every balanceOf[x]";
+    assert allowanceSpenderAfter == to_mathint(value), "permit did not set allowance[owner][spender] to value";
+    assert allowanceOtherAfter == allowanceOtherBefore, "permit did not keep unchanged the rest of allowance[x][y]";
+    assert noncesOwnerBefore < max_uint256 => noncesOwnerAfter == noncesOwnerBefore + 1, "permit did not increase nonces[owner] by 1";
+    assert noncesOwnerBefore == max_uint256 => noncesOwnerAfter == 0, "permit did not set nonces[owner] back to 0";
+    assert noncesOtherAfter == noncesOtherBefore, "permit did not keep unchanged the rest of nonces[x]";
 }
 
 // Verify revert rules on permit
