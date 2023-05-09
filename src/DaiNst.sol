@@ -48,8 +48,8 @@ contract DaiNst {
     GemLike     public immutable dai;
     GemLike     public immutable nst;
     
-    event DaiToNst(uint256 wad);
-    event NstToDai(uint256 wad);
+    event DaiToNst(address indexed caller, address indexed usr, uint256 wad);
+    event NstToDai(address indexed caller, address indexed usr, uint256 wad);
 
     constructor(address daiJoin_, address nstJoin_) {
         daiJoin = DaiJoinLike(daiJoin_);
@@ -68,17 +68,17 @@ contract DaiNst {
         VatLike(vat).hope(address(nstJoin));
     }
 
-    function daiToNst(uint256 wad) external {
+    function daiToNst(address usr, uint256 wad) external {
         dai.transferFrom(msg.sender, address(this), wad);
         daiJoin.join(address(this), wad);
-        nstJoin.exit(msg.sender, wad);
-        emit DaiToNst(wad);
+        nstJoin.exit(usr, wad);
+        emit DaiToNst(msg.sender, usr, wad);
     }
 
-    function nstToDai(uint256 wad) external {
+    function nstToDai(address usr, uint256 wad) external {
         nst.transferFrom(msg.sender, address(this), wad);
         nstJoin.join(address(this), wad);
-        daiJoin.exit(msg.sender, wad);
-        emit NstToDai(wad);
+        daiJoin.exit(usr, wad);
+        emit NstToDai(msg.sender, usr, wad);
     }
 }

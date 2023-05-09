@@ -49,6 +49,9 @@ contract DaiNstTest is DssTest {
     NstJoin nstJoin;
     DaiNst  daiNst;
 
+    event DaiToNst(address indexed caller, address indexed usr, uint256 wad);
+    event NstToDai(address indexed caller, address indexed usr, uint256 wad);
+
     function setUp() public {
         vat = new VatMock();
         dai = new Dai();
@@ -63,7 +66,6 @@ contract DaiNstTest is DssTest {
         daiNst = new DaiNst(address(daiJoin), address(nstJoin));
 
         vat.suck(address(this), 10_000 * RAD);
-
     }
 
     function testExchange() public {
@@ -75,14 +77,18 @@ contract DaiNstTest is DssTest {
         assertEq(nst.totalSupply(),            0);
 
         dai.approve(address(daiNst), 4_000 * WAD);
-        daiNst.daiToNst(4_000 * WAD);
+        vm.expectEmit(true, true, true, true);
+        emit DaiToNst(address(this), address(this), 4_000 * WAD);
+        daiNst.daiToNst(address(this), 4_000 * WAD);
         assertEq(dai.balanceOf(address(this)), 6_000 * WAD);
         assertEq(dai.totalSupply(),            6_000 * WAD);
         assertEq(nst.balanceOf(address(this)), 4_000 * WAD);
         assertEq(nst.totalSupply(),            4_000 * WAD);
 
         nst.approve(address(daiNst), 2_000 * WAD);
-        daiNst.nstToDai(2_000 * WAD);
+        vm.expectEmit(true, true, true, true);
+        emit NstToDai(address(this), address(this), 2_000 * WAD);
+        daiNst.nstToDai(address(this), 2_000 * WAD);
         assertEq(dai.balanceOf(address(this)), 8_000 * WAD);
         assertEq(dai.totalSupply(),            8_000 * WAD);
         assertEq(nst.balanceOf(address(this)), 2_000 * WAD);
