@@ -8,7 +8,7 @@ interface IERC1271 {
 }
 
 contract Auxiliar {    
-    function computeDigestForDai(
+    function computeDigestForToken(
         bytes32 domain_separator,
         bytes32 permit_typehash,
         address owner,
