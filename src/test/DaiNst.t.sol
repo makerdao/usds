@@ -93,5 +93,31 @@ contract DaiNstTest is DssTest {
         assertEq(dai.totalSupply(),            8_000 * WAD);
         assertEq(nst.balanceOf(address(this)), 2_000 * WAD);
         assertEq(nst.totalSupply(),            2_000 * WAD);
+
+        address receiver = address(123);
+        assertEq(dai.balanceOf(receiver),                0);
+        assertEq(nst.balanceOf(receiver),                0);
+
+        dai.approve(address(daiNst), 1_500 * WAD);
+        vm.expectEmit(true, true, true, true);
+        emit DaiToNst(address(this), receiver, 1_500 * WAD);
+        daiNst.daiToNst(receiver, 1_500 * WAD);
+        assertEq(dai.balanceOf(address(this)), 6_500 * WAD);
+        assertEq(dai.balanceOf(receiver),                0);
+        assertEq(dai.totalSupply(),            6_500 * WAD);
+        assertEq(nst.balanceOf(address(this)), 2_000 * WAD);
+        assertEq(nst.balanceOf(receiver),      1_500 * WAD);
+        assertEq(nst.totalSupply(),            3_500 * WAD);
+
+        nst.approve(address(daiNst), 500 * WAD);
+        vm.expectEmit(true, true, true, true);
+        emit NstToDai(address(this), receiver, 500 * WAD);
+        daiNst.nstToDai(receiver, 500 * WAD);
+        assertEq(dai.balanceOf(address(this)), 6_500 * WAD);
+        assertEq(dai.balanceOf(receiver),        500 * WAD);
+        assertEq(dai.totalSupply(),            7_000 * WAD);
+        assertEq(nst.balanceOf(address(this)), 1_500 * WAD);
+        assertEq(nst.balanceOf(receiver),      1_500 * WAD);
+        assertEq(nst.totalSupply(),            3_000 * WAD);
     }
 }
