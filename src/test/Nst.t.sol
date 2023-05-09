@@ -407,6 +407,11 @@ contract NstTest is DssTest {
         nst.permit(owner, address(0xCAFE), 1e18, deadline, v, r, s);
     }
 
+    function testPermitOwnerZero() public {
+        vm.expectRevert("Nst/invalid-owner");
+        nst.permit(address(0), address(0xCAFE), 1e18, block.timestamp, 28, bytes32(0), bytes32(0));
+    }
+
     function testPermitReplay() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
