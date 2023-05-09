@@ -259,9 +259,32 @@ rule transferFrom_revert(address from, address to, uint256 value) {
 rule approve(address spender, uint256 value) {
     env e;
 
+    address other;
+    require(other != spender);
+    address anyUsr;
+
+    mathint wardsBefore = wards(anyUsr);
+    mathint totalSupplyBefore = totalSupply();
+    mathint balanceOfBefore = balanceOf(anyUsr);
+    mathint allowanceOtherBefore = allowance(anyUsr, other);
+    mathint noncesBefore = nonces(anyUsr);
+
     approve(e, spender, value);
 
-    assert allowance(e.msg.sender, spender) == value, "approve did not set the allowance as expected";
+    mathint wardsAfter = wards(anyUsr);
+    mathint wardsOtherAfter = wards(other);
+    mathint totalSupplyAfter = totalSupply();
+    mathint balanceOfAfter = balanceOf(anyUsr);
+    mathint allowanceSpenderAfter = allowance(e.msg.sender, spender);
+    mathint allowanceOtherAfter = allowance(anyUsr, other);
+    mathint noncesAfter = nonces(anyUsr);
+
+    assert wardsAfter == wardsBefore, "approve did not keep unchanged wards";
+    assert totalSupplyAfter == totalSupplyBefore, "approve did not keep unchanged totalSupply";
+    assert balanceOfAfter == balanceOfBefore, "approve did not keep unchanged balanceOf[x]";
+    assert allowanceSpenderAfter == to_mathint(value), "approve did not change allowance of spender to value";
+    assert allowanceOtherAfter == allowanceOtherBefore, "approve did not keep unchanged the rest of allowance[x][y]";
+    assert noncesAfter == noncesBefore, "approve did not keep unchanged every nonces[x]";
 }
 
 // Verify revert rules on approve
@@ -280,11 +303,33 @@ rule approve_revert(address spender, uint256 value) {
 rule increaseAllowance(address spender, uint256 value) {
     env e;
 
-    mathint spenderAllowance = allowance(e.msg.sender, spender);
+    address other;
+    require(other != spender);
+    address anyUsr;
+
+    mathint wardsBefore = wards(anyUsr);
+    mathint totalSupplyBefore = totalSupply();
+    mathint balanceOfBefore = balanceOf(anyUsr);
+    mathint allowanceSpenderBefore = allowance(e.msg.sender, spender);
+    mathint allowanceOtherBefore = allowance(anyUsr, other);
+    mathint noncesBefore = nonces(anyUsr);
 
     increaseAllowance(e, spender, value);
 
-    assert to_mathint(allowance(e.msg.sender, spender)) == spenderAllowance + value, "increaseAllowance did not increase the allowance as expected";
+    mathint wardsAfter = wards(anyUsr);
+    mathint wardsOtherAfter = wards(other);
+    mathint totalSupplyAfter = totalSupply();
+    mathint balanceOfAfter = balanceOf(anyUsr);
+    mathint allowanceSpenderAfter = allowance(e.msg.sender, spender);
+    mathint allowanceOtherAfter = allowance(anyUsr, other);
+    mathint noncesAfter = nonces(anyUsr);
+
+    assert wardsAfter == wardsBefore, "approve did not keep unchanged wards";
+    assert totalSupplyAfter == totalSupplyBefore, "approve did not keep unchanged totalSupply";
+    assert balanceOfAfter == balanceOfBefore, "approve did not keep unchanged balanceOf[x]";
+    assert allowanceSpenderAfter == allowanceSpenderBefore + value, "approve did not increase allowance of spender by value";
+    assert allowanceOtherAfter == allowanceOtherBefore, "approve did not keep unchanged the rest of allowance[x][y]";
+    assert noncesAfter == noncesBefore, "approve did not keep unchanged every nonces[x]";
 }
 
 // Verify revert rules on increaseAllowance
@@ -307,11 +352,33 @@ rule increaseAllowance_revert(address spender, uint256 value) {
 rule decreaseAllowance(address spender, uint256 value) {
     env e;
 
-    mathint spenderAllowance = allowance(e.msg.sender, spender);
+    address other;
+    require(other != spender);
+    address anyUsr;
+
+    mathint wardsBefore = wards(anyUsr);
+    mathint totalSupplyBefore = totalSupply();
+    mathint balanceOfBefore = balanceOf(anyUsr);
+    mathint allowanceSpenderBefore = allowance(e.msg.sender, spender);
+    mathint allowanceOtherBefore = allowance(anyUsr, other);
+    mathint noncesBefore = nonces(anyUsr);
 
     decreaseAllowance(e, spender, value);
 
-    assert to_mathint(allowance(e.msg.sender, spender)) == spenderAllowance - value, "decreaseAllowance did not decrease the allowance as expected";
+    mathint wardsAfter = wards(anyUsr);
+    mathint wardsOtherAfter = wards(other);
+    mathint totalSupplyAfter = totalSupply();
+    mathint balanceOfAfter = balanceOf(anyUsr);
+    mathint allowanceSpenderAfter = allowance(e.msg.sender, spender);
+    mathint allowanceOtherAfter = allowance(anyUsr, other);
+    mathint noncesAfter = nonces(anyUsr);
+
+    assert wardsAfter == wardsBefore, "approve did not keep unchanged wards";
+    assert totalSupplyAfter == totalSupplyBefore, "approve did not keep unchanged totalSupply";
+    assert balanceOfAfter == balanceOfBefore, "approve did not keep unchanged balanceOf[x]";
+    assert allowanceSpenderAfter == allowanceSpenderBefore - value, "approve did not decrease allowance of spender by value";
+    assert allowanceOtherAfter == allowanceOtherBefore, "approve did not keep unchanged the rest of allowance[x][y]";
+    assert noncesAfter == noncesBefore, "approve did not keep unchanged every nonces[x]";
 }
 
 // Verify revert rules on decreaseAllowance
