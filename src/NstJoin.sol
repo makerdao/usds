@@ -35,8 +35,8 @@ contract NstJoin {
     uint256 constant RAY = 10 ** 27;
 
     // --- Events ---
-    event Join(address indexed usr, uint256 wad);
-    event Exit(address indexed usr, uint256 wad);
+    event Join(address indexed caller, address indexed usr, uint256 wad);
+    event Exit(address indexed caller, address indexed usr, uint256 wad);
 
     constructor(address vat_, address nst_) {
         vat = VatLike(vat_);
@@ -47,13 +47,13 @@ contract NstJoin {
     function join(address usr, uint256 wad) external {
         vat.move(address(this), usr, RAY * wad);
         nst.burn(msg.sender, wad);
-        emit Join(usr, wad);
+        emit Join(msg.sender, usr, wad);
     }
 
     function exit(address usr, uint256 wad) external {
         vat.move(msg.sender, address(this), RAY * wad);
         nst.mint(usr, wad);
-        emit Exit(usr, wad);
+        emit Exit(msg.sender, usr, wad);
     }
 
     // To fully cover daiJoin abi

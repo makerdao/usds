@@ -40,6 +40,9 @@ contract NstJoinTest is DssTest {
     Nst     nst;
     NstJoin nstJoin;
 
+    event Join(address indexed caller, address indexed usr, uint256 wad);
+    event Exit(address indexed caller, address indexed usr, uint256 wad);
+
     function setUp() public {
         vat = new VatMock();
         nst = new Nst();
@@ -57,11 +60,15 @@ contract NstJoinTest is DssTest {
         vm.expectRevert("VatMock/not-allowed");
         nstJoin.exit(receiver, 4_000 * WAD);
         vat.hope(address(nstJoin));
+        vm.expectEmit(true, true, true, true);
+        emit Exit(address(this), receiver, 4_000 * WAD);
         nstJoin.exit(receiver, 4_000 * WAD);
         assertEq(nst.balanceOf(receiver), 4_000 * WAD);
         assertEq(vat.dai(address(this)), 6_000 * RAD);
         vm.startPrank(receiver);
         nst.approve(address(nstJoin), 2_000 * WAD);
+        vm.expectEmit(true, true, true, true);
+        emit Join(receiver, address(this), 2_000 * WAD);
         nstJoin.join(address(this), 2_000 * WAD);
         assertEq(nst.balanceOf(receiver), 2_000 * WAD);
         assertEq(vat.dai(address(this)), 8_000 * RAD);
