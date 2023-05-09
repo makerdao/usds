@@ -38,7 +38,7 @@ rule rely(address usr) {
     env e;
 
     address other;
-    require(other != usr);
+    require other != usr;
     address anyUsr; address anyUsr2;
 
     mathint wardsOtherBefore = wards(other);
@@ -85,7 +85,7 @@ rule deny(address usr) {
     env e;
 
     address other;
-    require(other != usr);
+    require other != usr;
     address anyUsr; address anyUsr2;
 
     mathint wardsOtherBefore = wards(other);
@@ -134,7 +134,7 @@ rule transfer(address to, uint256 value) {
     requireInvariant balanceSum_equals_totalSupply();
 
     address other;
-    require(other != e.msg.sender && other != to);
+    require other != e.msg.sender && other != to;
     address anyUsr; address anyUsr2;
 
     bool senderSameAsTo = e.msg.sender == to;
@@ -150,7 +150,6 @@ rule transfer(address to, uint256 value) {
     transfer(e, to, value);
 
     mathint wardsAfter = wards(anyUsr);
-    mathint wardsOtherAfter = wards(other);
     mathint totalSupplyAfter = totalSupply();
     mathint balanceOfSenderAfter = balanceOf(e.msg.sender);
     mathint balanceOfToAfter = balanceOf(to);
@@ -193,9 +192,9 @@ rule transferFrom(address from, address to, uint256 value) {
     requireInvariant balanceSum_equals_totalSupply();
 
     address other;
-    require(other != from && other != to);
+    require other != from && other != to;
     address other2; address other3;
-    require(other2 != from || other3 != e.msg.sender);
+    require other2 != from || other3 != e.msg.sender;
     address anyUsr; address anyUsr2;
 
     bool fromSameAsTo = from == to;
@@ -213,7 +212,6 @@ rule transferFrom(address from, address to, uint256 value) {
     transferFrom(e, from, to, value);
 
     mathint wardsAfter = wards(anyUsr);
-    mathint wardsOtherAfter = wards(other);
     mathint totalSupplyAfter = totalSupply();
     mathint balanceOfFromAfter = balanceOf(from);
     mathint balanceOfToAfter = balanceOf(to);
@@ -259,24 +257,23 @@ rule transferFrom_revert(address from, address to, uint256 value) {
 rule approve(address spender, uint256 value) {
     env e;
 
-    address other;
-    require(other != spender);
     address anyUsr;
+    address anyUsr2; address anyUsr3;
+    require anyUsr2 != e.msg.sender || anyUsr3 != spender;
 
     mathint wardsBefore = wards(anyUsr);
     mathint totalSupplyBefore = totalSupply();
     mathint balanceOfBefore = balanceOf(anyUsr);
-    mathint allowanceOtherBefore = allowance(anyUsr, other);
+    mathint allowanceOtherBefore = allowance(anyUsr2, anyUsr3);
     mathint noncesBefore = nonces(anyUsr);
 
     approve(e, spender, value);
 
     mathint wardsAfter = wards(anyUsr);
-    mathint wardsOtherAfter = wards(other);
     mathint totalSupplyAfter = totalSupply();
     mathint balanceOfAfter = balanceOf(anyUsr);
     mathint allowanceSpenderAfter = allowance(e.msg.sender, spender);
-    mathint allowanceOtherAfter = allowance(anyUsr, other);
+    mathint allowanceOtherAfter = allowance(anyUsr2, anyUsr3);
     mathint noncesAfter = nonces(anyUsr);
 
     assert wardsAfter == wardsBefore, "approve did not keep unchanged wards";
@@ -303,25 +300,24 @@ rule approve_revert(address spender, uint256 value) {
 rule increaseAllowance(address spender, uint256 value) {
     env e;
 
-    address other;
-    require(other != spender);
     address anyUsr;
+    address anyUsr2; address anyUsr3;
+    require anyUsr2 != e.msg.sender || anyUsr3 != spender;
 
     mathint wardsBefore = wards(anyUsr);
     mathint totalSupplyBefore = totalSupply();
     mathint balanceOfBefore = balanceOf(anyUsr);
     mathint allowanceSpenderBefore = allowance(e.msg.sender, spender);
-    mathint allowanceOtherBefore = allowance(anyUsr, other);
+    mathint allowanceOtherBefore = allowance(anyUsr2, anyUsr3);
     mathint noncesBefore = nonces(anyUsr);
 
     increaseAllowance(e, spender, value);
 
     mathint wardsAfter = wards(anyUsr);
-    mathint wardsOtherAfter = wards(other);
     mathint totalSupplyAfter = totalSupply();
     mathint balanceOfAfter = balanceOf(anyUsr);
     mathint allowanceSpenderAfter = allowance(e.msg.sender, spender);
-    mathint allowanceOtherAfter = allowance(anyUsr, other);
+    mathint allowanceOtherAfter = allowance(anyUsr2, anyUsr3);
     mathint noncesAfter = nonces(anyUsr);
 
     assert wardsAfter == wardsBefore, "increaseAllowance did not keep unchanged wards";
@@ -352,25 +348,24 @@ rule increaseAllowance_revert(address spender, uint256 value) {
 rule decreaseAllowance(address spender, uint256 value) {
     env e;
 
-    address other;
-    require(other != spender);
     address anyUsr;
+    address anyUsr2; address anyUsr3;
+    require anyUsr2 != e.msg.sender || anyUsr3 != spender;
 
     mathint wardsBefore = wards(anyUsr);
     mathint totalSupplyBefore = totalSupply();
     mathint balanceOfBefore = balanceOf(anyUsr);
     mathint allowanceSpenderBefore = allowance(e.msg.sender, spender);
-    mathint allowanceOtherBefore = allowance(anyUsr, other);
+    mathint allowanceOtherBefore = allowance(anyUsr2, anyUsr3);
     mathint noncesBefore = nonces(anyUsr);
 
     decreaseAllowance(e, spender, value);
 
     mathint wardsAfter = wards(anyUsr);
-    mathint wardsOtherAfter = wards(other);
     mathint totalSupplyAfter = totalSupply();
     mathint balanceOfAfter = balanceOf(anyUsr);
     mathint allowanceSpenderAfter = allowance(e.msg.sender, spender);
-    mathint allowanceOtherAfter = allowance(anyUsr, other);
+    mathint allowanceOtherAfter = allowance(anyUsr2, anyUsr3);
     mathint noncesAfter = nonces(anyUsr);
 
     assert wardsAfter == wardsBefore, "decreaseAllowance did not keep unchanged wards";
@@ -404,7 +399,7 @@ rule mint(address to, uint256 value) {
     requireInvariant balanceSum_equals_totalSupply();
 
     address other;
-    require(other != to);
+    require other != to;
     address anyUsr; address anyUsr2;
 
     bool senderSameAsTo = e.msg.sender == to;
@@ -419,7 +414,6 @@ rule mint(address to, uint256 value) {
     mint(e, to, value);
 
     mathint wardsAfter = wards(anyUsr);
-    mathint wardsOtherAfter = wards(other);
     mathint totalSupplyAfter = totalSupply();
     mathint balanceOfToAfter = balanceOf(to);
     mathint balanceOfOtherAfter = balanceOf(other);
@@ -463,9 +457,9 @@ rule burn(address from, uint256 value) {
     requireInvariant balanceSum_equals_totalSupply();
 
     address other;
-    require(other != from);
+    require other != from;
     address anyUsr; address anyUsr2;
-    require(anyUsr != from || anyUsr2 != e.msg.sender);
+    require anyUsr != from || anyUsr2 != e.msg.sender;
 
     mathint wardsBefore = wards(anyUsr);
     mathint totalSupplyBefore = totalSupply();
@@ -480,7 +474,6 @@ rule burn(address from, uint256 value) {
     burn(e, from, value);
 
     mathint wardsAfter = wards(anyUsr);
-    mathint wardsOtherAfter = wards(other);
     mathint totalSupplyAfter = totalSupply();
     mathint balanceOfSenderAfter = balanceOf(e.msg.sender);
     mathint balanceOfFromAfter = balanceOf(from);
