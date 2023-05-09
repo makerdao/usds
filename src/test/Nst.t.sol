@@ -387,7 +387,7 @@ contract NstTest is DssTest {
     function testPermitPastDeadline() public {
         uint256 privateKey = 0xBEEF;
         address owner = vm.addr(privateKey);
-        uint256 deadline = block.timestamp == 0 ? 0 : block.timestamp - 1;
+        uint256 deadline = block.timestamp;
 
         bytes32 domain_separator = nst.DOMAIN_SEPARATOR();
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(
