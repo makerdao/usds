@@ -685,7 +685,6 @@ contract NstTest is DssTest {
         uint256 deadline
     ) public {
         if (deadline == type(uint256).max) deadline -= 1;
-        vm.warp(deadline);
 
         // private key cannot be 0 for secp256k1 pubkey generation
         if (privateKey == 0) privateKey = 1;
