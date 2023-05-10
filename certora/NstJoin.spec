@@ -169,8 +169,8 @@ rule exit_revert(address usr, uint256 wad) {
     assert revert2 => lastReverted, "revert2 failed";
     assert revert3 => lastReverted, "revert3 failed";
     assert revert4 => lastReverted, "revert4 failed";
-    assert revert5 => lastReverted, "revert4 failed";
-    assert revert6 => lastReverted, "revert4 failed";
+    assert revert5 => lastReverted, "revert5 failed";
+    assert revert6 => lastReverted, "revert6 failed";
     assert lastReverted => revert1 || revert2 || revert3 ||
                            revert4 || revert5 || revert6, "Revert rules are not covering all the cases";
 }
