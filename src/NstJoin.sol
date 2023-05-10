@@ -32,7 +32,7 @@ interface VatLike {
 contract NstJoin {
     VatLike public immutable vat;  // CDP Engine
     NstLike public immutable nst;  // Stablecoin Token
-    
+
     uint256 constant RAY = 10 ** 27;
 
     // --- Events ---
