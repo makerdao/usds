@@ -30,8 +30,9 @@ interface VatLike {
 }
 
 contract NstJoin {
-    VatLike public immutable vat;       // CDP Engine
-    NstLike public immutable nst;       // Stablecoin Token
+    VatLike public immutable vat;  // CDP Engine
+    NstLike public immutable nst;  // Stablecoin Token
+    
     uint256 constant RAY = 10 ** 27;
 
     // --- Events ---
@@ -43,7 +44,6 @@ contract NstJoin {
         nst = NstLike(nst_);
     }
 
-    // --- User's functions ---
     function join(address usr, uint256 wad) external {
         vat.move(address(this), usr, RAY * wad);
         nst.burn(msg.sender, wad);
