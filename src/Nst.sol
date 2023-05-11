@@ -199,7 +199,6 @@ contract Nst {
     }
 
     // --- Approve by signature ---
-
     function _isValidSignature(
         address signer,
         bytes32 digest,
