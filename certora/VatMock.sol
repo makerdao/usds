@@ -22,6 +22,9 @@ pragma solidity ^0.8.16;
 contract VatMock {
     mapping (address => uint256) public dai;
 
+    function hope(address) external {
+    }
+
     function move(address src, address dst, uint256 rad) external {
         dai[src] = dai[src] - rad;
         dai[dst] = dai[dst] + rad;
