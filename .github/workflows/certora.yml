@@ -12,6 +12,7 @@ jobs:
         nst:
           - nst
           - nst-join
+          - dai-nst
 
     steps:
       - name: Checkout
