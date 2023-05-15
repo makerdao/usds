@@ -19,4 +19,5 @@ However, in practice, `NstJoin` acts the exact same way as the production `DaiJo
 
 ### DaiNst
 
-It is a permissionless converter between `Dai` and `Nst` (both ways). Using the `public` functions of `NstJoin` and `DaiJoin` moves from one token to the other. It is just a "convenience" contract, users could still get the same outcome executing the separate methods in the `join`s or use any other converter implementation.
+It is a permissionless converter between `Dai` and `Nst` (both ways). Using the `public` functions of `NstJoin` and `DaiJoin` moves from one token to the other. The exchange rate is 1:1.
+It is just a "convenience" contract, users could still get the same outcome executing the separate methods in the `join`s or use any other converter implementation.
