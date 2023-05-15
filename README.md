@@ -1,6 +1,6 @@
 # NST Token and contracts associated
 
-This repo includes 3 smart contracts:
+This repository includes 3 smart contracts:
 
 - NST token
 - NstJoin
