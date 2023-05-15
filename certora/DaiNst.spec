@@ -11,12 +11,10 @@ methods {
     function nst.totalSupply() external returns (uint256) envfree;
     function nst.balanceOf(address) external returns (uint256) envfree;
     function nst.allowance(address, address) external returns (uint256) envfree;
-    function nst.nonces(address) external returns (uint256) envfree;
     function dai.wards(address) external returns (uint256) envfree;
     function dai.totalSupply() external returns (uint256) envfree;
     function dai.balanceOf(address) external returns (uint256) envfree;
     function dai.allowance(address, address) external returns (uint256) envfree;
-    function dai.nonces(address) external returns (uint256) envfree;
     function vat.dai(address) external returns (uint256) envfree;
     function _.vat() external => DISPATCHER(true);
     function _.dai() external => DISPATCHER(true);
