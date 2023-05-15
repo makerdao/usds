@@ -90,7 +90,7 @@ rule daiToNst(address usr, uint256 wad) {
     assert nstBalanceOfUsrAfter == nstBalanceOfUsrBefore + wad, "daiToNst did not increase nst.balanceOf[usr] by wad";
     assert nstBalanceOfOtherAfter == nstBalanceOfOtherBefore, "daiToNst did not keep unchanged the rest of nst.balanceOf[x]";
     assert daiTotalSupplyAfter == daiTotalSupplyBefore - wad, "daiToNst did not decrease dai.totalSupply by wad";
-    assert daiBalanceOfSenderAfter == daiBalanceOfSenderBefore - wad, "daiToNst did not decrease dai.balanceOf[usr] by wad";
+    assert daiBalanceOfSenderAfter == daiBalanceOfSenderBefore - wad, "daiToNst did not decrease dai.balanceOf[sender] by wad";
     assert daiBalanceOfOtherAfter == daiBalanceOfOtherBefore, "daiToNst did not keep unchanged the rest of dai.balanceOf[x]";
     assert vatDaiNstJoinAfter == vatDaiNstJoinBefore + wad * RAY(), "daiToNst did not increase vat.dai(nstJoin) by wad * RAY";
     assert vatDaiDaiJoinAfter == vatDaiDaiJoinBefore - wad * RAY(), "daiToNst did not decrease vat.dai(daiJoin) by wad * RAY";
@@ -176,7 +176,7 @@ rule nstToDai(address usr, uint256 wad) {
     mathint vatDaiDaiJoinAfter = vat.dai(daiJoin);
 
     assert nstTotalSupplyAfter == nstTotalSupplyBefore - wad, "nstToDai did not decrease nst.totalSupply by wad";
-    assert nstBalanceOfSenderAfter == nstBalanceOfSenderBefore - wad, "nstToDai did not decrease nst.balanceOf[usr] by wad";
+    assert nstBalanceOfSenderAfter == nstBalanceOfSenderBefore - wad, "nstToDai did not decrease nst.balanceOf[sender] by wad";
     assert nstBalanceOfOtherAfter == nstBalanceOfOtherBefore, "nstToDai did not keep unchanged the rest of nst.balanceOf[x]";
     assert daiTotalSupplyAfter == daiTotalSupplyBefore + wad, "nstToDai did not decrease dai.totalSupply by wad";
     assert daiBalanceOfUsrAfter == daiBalanceOfUsrBefore + wad, "nstToDai did not decrease dai.balanceOf[usr] by wad";
