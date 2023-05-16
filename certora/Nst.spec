@@ -626,7 +626,8 @@ rule permitSignature_revert(address owner, address spender, uint256 value, uint2
                     );
     uint8 v; bytes32 r; bytes32 s;
     v, r, s = aux.signatureToVRS(signature);
-    address ownerRecover = aux.size(signature) == 65 ? aux.call_ecrecover(digest, v, r, s) : 0;
+    address null_address = 0;
+    address ownerRecover = aux.size(signature) == 65 ? aux.call_ecrecover(digest, v, r, s) : null_address;
     bytes32 returnedSig = owner == signer ? signer.isValidSignature(e, digest, signature) : to_bytes32(0);
 
     permit@withrevert(e, owner, spender, value, deadline, signature);
