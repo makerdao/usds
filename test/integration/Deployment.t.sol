@@ -53,7 +53,7 @@ contract DeploymentTest is DssTest {
         inst = NstDeploy.deploy(address(this), PAUSE_PROXY, DAIJOIN);
     }
 
-    function testDeployment() public {
+    function testSetUp() public {
         DssInstance memory dss = MCD.loadFromChainlog(LOG);
 
         assertEq(Nst(inst.nst).wards(PAUSE_PROXY), 1);
