@@ -46,9 +46,9 @@ contract DeploymentTest is DssTest {
     function setUp() public {
         vm.createSelectFork(vm.envString("ETH_RPC_URL"));
 
-        PAUSE_PROXY  = ChainlogLike(LOG).getAddress("MCD_PAUSE_PROXY");
-        DAIJOIN      = ChainlogLike(LOG).getAddress("MCD_JOIN_DAI");
-        DAI          = ChainlogLike(LOG).getAddress("MCD_DAI");
+        PAUSE_PROXY = ChainlogLike(LOG).getAddress("MCD_PAUSE_PROXY");
+        DAIJOIN     = ChainlogLike(LOG).getAddress("MCD_JOIN_DAI");
+        DAI         = ChainlogLike(LOG).getAddress("MCD_DAI");
 
         inst = NstDeploy.deploy(address(this), PAUSE_PROXY, DAIJOIN);
     }
