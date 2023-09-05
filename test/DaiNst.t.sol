@@ -4,9 +4,9 @@ pragma solidity ^0.8.16;
 
 import "dss-test/DssTest.sol";
 
-import { Nst } from "../Nst.sol";
-import { NstJoin } from "../NstJoin.sol";
-import { DaiNst } from "../DaiNst.sol";
+import { Nst } from "src/Nst.sol";
+import { NstJoin } from "src/NstJoin.sol";
+import { DaiNst } from "src/DaiNst.sol";
 
 contract VatMock {
     mapping (address => mapping (address => uint256)) public can;

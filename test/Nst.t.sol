@@ -4,7 +4,7 @@ pragma solidity ^0.8.16;
 
 import "token-tests/TokenFuzzTests.sol";
 
-import { Nst } from "../Nst.sol";
+import { Nst } from "src/Nst.sol";
 
 contract NstTest is TokenFuzzTests {
     Nst nst;
