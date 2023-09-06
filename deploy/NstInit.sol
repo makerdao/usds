@@ -26,6 +26,7 @@ interface NstLike {
 
 interface NstJoinLike {
     function nst() external view returns (address);
+    function vat() external view returns (address);
 }
 
 interface DaiNstLike {
@@ -38,6 +39,7 @@ library NstInit {
         DssInstance memory dss,
         NstInstance memory instance
     ) internal {
+        require(NstJoinLike(instance.nstJoin).vat() == address(dss.vat), "NstInit/vat-does-not-match");
         require(NstJoinLike(instance.nstJoin).nst() == instance.nst, "NstInit/nst-does-not-match");
 
         address daiJoin = dss.chainlog.getAddress("MCD_JOIN_DAI");
