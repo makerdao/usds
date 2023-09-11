@@ -38,7 +38,6 @@ library NstDeploy {
         ScriptTools.switchOwner(_nst, deployer, owner);
 
         address _nstJoin = address(new NstJoin(DaiJoinLike(daiJoin).vat(), _nst));
-
         address _daiNst = address(new DaiNst(daiJoin, _nstJoin));
 
         instance.nst     = _nst;
