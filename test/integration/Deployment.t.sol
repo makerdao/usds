@@ -84,7 +84,7 @@ contract DeploymentTest is DssTest {
         assertEq(GemLike(inst.nst).balanceOf(address(this)), 200);
 
         assertEq(ChainlogLike(LOG).getAddress("NST"), inst.nst);
-        assertEq(ChainlogLike(LOG).getAddress("NSTJOIN"), inst.nstJoin);
-        assertEq(ChainlogLike(LOG).getAddress("DAINST"), inst.daiNst);
+        assertEq(ChainlogLike(LOG).getAddress("NST_JOIN"), inst.nstJoin);
+        assertEq(ChainlogLike(LOG).getAddress("DAI_NST"), inst.daiNst);
     }
 }

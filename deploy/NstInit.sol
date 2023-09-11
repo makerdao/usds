@@ -49,8 +49,8 @@ library NstInit {
         NstLike(instance.nst).rely(instance.nstJoin);
         NstLike(instance.nst).deny(instance.owner);
 
-        dss.chainlog.setAddress("NST",     instance.nst);
-        dss.chainlog.setAddress("NSTJOIN", instance.nstJoin);
-        dss.chainlog.setAddress("DAINST",  instance.daiNst);
+        dss.chainlog.setAddress("NST",      instance.nst);
+        dss.chainlog.setAddress("NST_JOIN", instance.nstJoin);
+        dss.chainlog.setAddress("DAI_NST",  instance.daiNst);
     }
 }
