@@ -154,7 +154,7 @@ contract Nst {
     function decreaseAllowance(address spender, uint256 subtractedValue) external returns (bool) {
         uint256 allowed = allowance[msg.sender][spender];
         require(allowed >= subtractedValue, "Nst/insufficient-allowance");
-        unchecked{
+        unchecked {
             allowed = allowed - subtractedValue;
         }
         allowance[msg.sender][spender] = allowed;
