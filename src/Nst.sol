@@ -100,7 +100,7 @@ contract Nst {
 
         unchecked {
             balanceOf[msg.sender] = balance - value;
-            balanceOf[to] += value;
+            balanceOf[to] += value; // note: we don't need an overflow check here b/c sum of all balances == totalSupply
         }
 
         emit Transfer(msg.sender, to, value);
@@ -126,7 +126,7 @@ contract Nst {
 
         unchecked {
             balanceOf[from] = balance - value;
-            balanceOf[to] += value;
+            balanceOf[to] += value; // note: we don't need an overflow check here b/c sum of all balances == totalSupply
         }
 
         emit Transfer(from, to, value);
