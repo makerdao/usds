@@ -142,28 +142,6 @@ contract Nst {
         return true;
     }
 
-    function increaseAllowance(address spender, uint256 addedValue) external returns (bool) {
-        uint256 newValue = allowance[msg.sender][spender] + addedValue;
-        allowance[msg.sender][spender] = newValue;
-
-        emit Approval(msg.sender, spender, newValue);
-
-        return true;
-    }
-
-    function decreaseAllowance(address spender, uint256 subtractedValue) external returns (bool) {
-        uint256 allowed = allowance[msg.sender][spender];
-        require(allowed >= subtractedValue, "Nst/insufficient-allowance");
-        unchecked {
-            allowed = allowed - subtractedValue;
-        }
-        allowance[msg.sender][spender] = allowed;
-
-        emit Approval(msg.sender, spender, allowed);
-
-        return true;
-    }
-
     // --- Mint/Burn ---
     function mint(address to, uint256 value) external auth {
         require(to != address(0) && to != address(this), "Nst/invalid-address");
@@ -203,7 +181,7 @@ contract Nst {
         address signer,
         bytes32 digest,
         bytes memory signature
-    ) internal view returns (bool) {
+    ) internal view returns (bool valid) {
         if (signature.length == 65) {
             bytes32 r;
             bytes32 s;
@@ -218,12 +196,14 @@ contract Nst {
             }
         }
 
-        (bool success, bytes memory result) = signer.staticcall(
-            abi.encodeWithSelector(IERC1271.isValidSignature.selector, digest, signature)
-        );
-        return (success &&
-            result.length == 32 &&
-            abi.decode(result, (bytes4)) == IERC1271.isValidSignature.selector);
+        if (signer.code.length > 0) {
+            (bool success, bytes memory result) = signer.staticcall(
+                abi.encodeCall(IERC1271.isValidSignature, (digest, signature))
+            );
+            valid = (success &&
+                result.length == 32 &&
+                abi.decode(result, (bytes4)) == IERC1271.isValidSignature.selector);
+        }
     }
 
     function permit(
