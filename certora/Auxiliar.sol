@@ -51,6 +51,10 @@ contract Auxiliar {
         }
     }
 
+    function VRSToSignature(uint8 v, bytes32 r, bytes32 s) public returns (bytes memory signature) {
+        signature = abi.encodePacked(r, s, v);
+    }
+
     function size(bytes memory data) public returns (uint256 size_) {
         size_ = data.length;
     }

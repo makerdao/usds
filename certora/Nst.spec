@@ -19,6 +19,7 @@ methods {
     function aux.call_ecrecover(bytes32, uint8, bytes32, bytes32) external returns (address) envfree;
     function aux.computeDigestForToken(bytes32, bytes32, address, address, uint256, uint256, uint256) external returns (bytes32) envfree;
     function aux.signatureToVRS(bytes) external returns (uint8, bytes32, bytes32) envfree;
+    function aux.VRSToSignature(uint8, bytes32, bytes32) external returns (bytes) envfree;
     function aux.size(bytes) external returns (uint256) envfree;
     function _.isValidSignature(bytes32, bytes) external => DISPATCHER(true);
 }
@@ -27,7 +28,7 @@ ghost balanceSum() returns mathint {
     init_state axiom balanceSum() == 0;
 }
 
-hook Sstore balanceOf[KEY address a] uint256 balance (uint256 old_balance) STORAGE {
+hook Sstore balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
     havoc balanceSum assuming balanceSum@new() == balanceSum@old() + balance - old_balance && balanceSum@new() >= 0;
 }
 
@@ -461,13 +462,14 @@ rule permitVRS_revert(address owner, address spender, uint256 value, uint256 dea
                         deadline
                     );
     address ownerRecover = aux.call_ecrecover(digest, v, r, s);
+    bytes32 returnedSig = owner == signer ? signer.isValidSignature(e, digest, aux.VRSToSignature(v, r, s)) : to_bytes32(0);
 
     permit@withrevert(e, owner, spender, value, deadline, v, r, s);
 
     bool revert1 = e.msg.value > 0;
     bool revert2 = e.block.timestamp > deadline;
     bool revert3 = owner == 0;
-    bool revert4 = owner != ownerRecover;
+    bool revert4 = owner != ownerRecover && returnedSig != to_bytes32(0x1626ba7e00000000000000000000000000000000000000000000000000000000);
 
     assert revert1 => lastReverted, "revert1 failed";
     assert revert2 => lastReverted, "revert2 failed";

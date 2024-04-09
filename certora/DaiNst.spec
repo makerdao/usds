@@ -29,7 +29,7 @@ ghost balanceSumNst() returns mathint {
     init_state axiom balanceSumNst() == 0;
 }
 
-hook Sstore nst.balanceOf[KEY address a] uint256 balance (uint256 old_balance) STORAGE {
+hook Sstore nst.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
     havoc balanceSumNst assuming balanceSumNst@new() == balanceSumNst@old() + balance - old_balance && balanceSumNst@new() >= 0;
 }
 
@@ -39,7 +39,7 @@ ghost balanceSumDai() returns mathint {
     init_state axiom balanceSumDai() == 0;
 }
 
-hook Sstore dai.balanceOf[KEY address a] uint256 balance (uint256 old_balance) STORAGE {
+hook Sstore dai.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
     havoc balanceSumDai assuming balanceSumDai@new() == balanceSumDai@old() + balance - old_balance && balanceSumDai@new() >= 0;
 }
 
