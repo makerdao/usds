@@ -39,6 +39,6 @@ jobs:
         run: pip3 install certora-cli-beta
 
       - name: Verify ${{ matrix.nst }}
-        run: make certora-${{ matrix.nst }} short=1 multi=1
+        run: make certora-${{ matrix.nst }}
         env:
           CERTORAKEY: ${{ secrets.CERTORAKEY }}
