@@ -1,4 +1,4 @@
-pragma solidity 0.8.16;
+pragma solidity 0.8.21;
 
 interface IERC1271 {
     function isValidSignature(
