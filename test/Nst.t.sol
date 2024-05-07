@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.21;
 
 import "token-tests/TokenFuzzTests.sol";
 
@@ -20,7 +20,7 @@ contract NstTest is TokenFuzzTests {
         _symbol_ = "NST";
     }
 
-    function invariantMetadata() public {
+    function invariantMetadata() public view {
         assertEq(nst.name(), "Nst Stablecoin");
         assertEq(nst.symbol(), "NST");
         assertEq(nst.version(), "1");
