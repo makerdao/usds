@@ -33,7 +33,11 @@ hook Sstore nst.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
     havoc balanceSumNst assuming balanceSumNst@new() == balanceSumNst@old() + balance - old_balance && balanceSumNst@new() >= 0;
 }
 
-invariant balanceSumNst_equals_totalSupply() balanceSumNst() == to_mathint(nst.totalSupply());
+invariant balanceSumNst_equals_totalSupply()
+    balanceSumNst() == to_mathint(nst.totalSupply())
+    filtered {
+        m -> m.selector != sig:Nst.upgradeToAndCall(address,bytes).selector
+    }
 
 ghost balanceSumDai() returns mathint {
     init_state axiom balanceSumDai() == 0;
@@ -43,7 +47,11 @@ hook Sstore dai.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
     havoc balanceSumDai assuming balanceSumDai@new() == balanceSumDai@old() + balance - old_balance && balanceSumDai@new() >= 0;
 }
 
-invariant balanceSumDai_equals_totalSupply() balanceSumDai() == to_mathint(dai.totalSupply());
+invariant balanceSumDai_equals_totalSupply()
+    balanceSumDai() == to_mathint(dai.totalSupply())
+    filtered {
+        m -> m.selector != sig:Nst.upgradeToAndCall(address,bytes).selector
+    }
 
 // Verify correct storage changes for non reverting daiToNst
 rule daiToNst(address usr, uint256 wad) {

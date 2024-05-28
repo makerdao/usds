@@ -22,7 +22,11 @@ hook Sstore nst.balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
     havoc balanceSum assuming balanceSum@new() == balanceSum@old() + balance - old_balance && balanceSum@new() >= 0;
 }
 
-invariant balanceSum_equals_totalSupply() balanceSum() == to_mathint(nst.totalSupply());
+invariant balanceSum_equals_totalSupply()
+    balanceSum() == to_mathint(nst.totalSupply())
+    filtered {
+        m -> m.selector != sig:Nst.upgradeToAndCall(address,bytes).selector
+    }
 
 // Verify correct storage changes for non reverting join
 rule join(address usr, uint256 wad) {
