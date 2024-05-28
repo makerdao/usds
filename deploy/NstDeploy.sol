@@ -17,6 +17,7 @@
 pragma solidity ^0.8.21;
 
 import { ScriptTools } from "dss-test/ScriptTools.sol";
+import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import { Nst } from "src/Nst.sol";
 import { NstJoin } from "src/NstJoin.sol";
@@ -34,15 +35,16 @@ library NstDeploy {
         address owner,
         address daiJoin
     ) internal returns (NstInstance memory instance) {
-        address _nst = address(new Nst());
+        address _nstImp = address(new Nst());
+        address _nst = address((new ERC1967Proxy(_nstImp, abi.encodeCall(Nst.initialize, ()))));
         ScriptTools.switchOwner(_nst, deployer, owner);
 
         address _nstJoin = address(new NstJoin(DaiJoinLike(daiJoin).vat(), _nst));
         address _daiNst = address(new DaiNst(daiJoin, _nstJoin));
 
         instance.nst     = _nst;
+        instance.nstImp  = _nstImp;
         instance.nstJoin = _nstJoin;
         instance.daiNst  = _daiNst;
-        instance.owner   = owner;
     }
 }
