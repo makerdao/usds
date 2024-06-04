@@ -9,7 +9,6 @@ This repository includes 3 smart contracts:
 ### NST token
 
 This is a standard erc20 implementation with regular `permit` functionality + EIP-1271 smart contract signature validation.
-There should be only one `wards(address)` set, and that needs to be the `NstJoin` implementation.
 
 The token uses the ERC-1822 UUPS pattern for upgradeability and the ERC-1967 proxy storage slots standard.
 It is important that the `NstDeploy` library sequence be used for deploying the token.
