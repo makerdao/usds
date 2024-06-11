@@ -20,6 +20,8 @@
 
 pragma solidity ^0.8.21;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+
 interface IERC1271 {
     function isValidSignature(
         bytes32,
@@ -27,7 +29,7 @@ interface IERC1271 {
     ) external view returns (bytes4);
 }
 
-contract Nst {
+contract Nst is UUPSUpgradeable {
     mapping (address => uint256) public wards;
 
     // --- ERC20 Data ---
@@ -48,8 +50,6 @@ contract Nst {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     // --- EIP712 niceties ---
-    uint256 public immutable deploymentChainId;
-    bytes32 private immutable _DOMAIN_SEPARATOR;
     bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
     modifier auth {
@@ -58,11 +58,20 @@ contract Nst {
     }
 
     constructor() {
+        _disableInitializers(); // Avoid initializing in the context of the implementation
+    }
+
+    // --- Upgradability ---
+
+    function initialize() initializer external {
         wards[msg.sender] = 1;
         emit Rely(msg.sender);
+    }
 
-        deploymentChainId = block.chainid;
-        _DOMAIN_SEPARATOR = _calculateDomainSeparator(block.chainid);
+    function _authorizeUpgrade(address newImplementation) internal override auth {}
+
+    function getImplementation() external view returns (address) {
+        return ERC1967Utils.getImplementation();
     }
 
     function _calculateDomainSeparator(uint256 chainId) private view returns (bytes32) {
@@ -78,7 +87,7 @@ contract Nst {
     }
 
     function DOMAIN_SEPARATOR() external view returns (bytes32) {
-        return block.chainid == deploymentChainId ? _DOMAIN_SEPARATOR : _calculateDomainSeparator(block.chainid);
+        return _calculateDomainSeparator(block.chainid);
     }
 
     // --- Administration ---
@@ -222,7 +231,7 @@ contract Nst {
         bytes32 digest =
             keccak256(abi.encodePacked(
                 "\x19\x01",
-                block.chainid == deploymentChainId ? _DOMAIN_SEPARATOR : _calculateDomainSeparator(block.chainid),
+                _calculateDomainSeparator(block.chainid),
                 keccak256(abi.encode(
                     PERMIT_TYPEHASH,
                     owner,

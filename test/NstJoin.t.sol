@@ -3,61 +3,41 @@
 pragma solidity ^0.8.21;
 
 import "dss-test/DssTest.sol";
+import "dss-interfaces/Interfaces.sol";
+import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import { Nst } from "src/Nst.sol";
 
 import { NstJoin } from "src/NstJoin.sol";
 
-contract VatMock {
-    mapping (address => mapping (address => uint256)) public can;
-    mapping (address => uint256)                      public dai;
-
-    function either(bool x, bool y) internal pure returns (bool z) {
-        assembly{ z := or(x, y)}
-    }
-
-    function wish(address bit, address usr) internal view returns (bool) {
-        return either(bit == usr, can[bit][usr] == 1);
-    }
-
-    function hope(address usr) external {
-        can[msg.sender][usr] = 1;
-    }
-
-    function suck(address addr, uint256 rad) external {
-        dai[addr] = dai[addr] + rad;
-    }
-
-    function move(address src, address dst, uint256 rad) external {
-        require(wish(src, msg.sender), "VatMock/not-allowed");
-        dai[src] = dai[src] - rad;
-        dai[dst] = dai[dst] + rad;
-    }
-}
-
 contract NstJoinTest is DssTest {
-    VatMock vat;
-    Nst     nst;
-    NstJoin nstJoin;
+    ChainlogAbstract constant chainLog = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
+
+    VatAbstract vat;
+    Nst         nst;
+    NstJoin     nstJoin;
 
     event Join(address indexed caller, address indexed usr, uint256 wad);
     event Exit(address indexed caller, address indexed usr, uint256 wad);
 
     function setUp() public {
-        vat = new VatMock();
-        nst = new Nst();
+        vm.createSelectFork(vm.envString("ETH_RPC_URL"));
+
+        vat = VatAbstract(chainLog.getAddress("MCD_VAT"));
+        address pauseProxy = chainLog.getAddress("MCD_PAUSE_PROXY");
+        nst = Nst(address(new ERC1967Proxy(address(new Nst()), abi.encodeCall(Nst.initialize, ()))));
         nstJoin = new NstJoin(address(vat), address(nst));
         assertEq(nstJoin.dai(), address(nstJoin.nst()));
         nst.rely(address(nstJoin));
         nst.deny(address(this));
-        vat.suck(address(this), 10_000 * RAD);
+        vm.prank(pauseProxy); vat.suck(address(this), address(this), 10_000 * RAD);
     }
 
     function testJoinExit() public {
         address receiver = address(123);
         assertEq(nst.balanceOf(receiver), 0);
         assertEq(vat.dai(address(this)), 10_000 * RAD);
-        vm.expectRevert("VatMock/not-allowed");
+        vm.expectRevert("Vat/not-allowed");
         nstJoin.exit(receiver, 4_000 * WAD);
         vat.hope(address(nstJoin));
         vm.expectEmit(true, true, true, true);

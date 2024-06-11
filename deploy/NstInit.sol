@@ -21,7 +21,8 @@ import { NstInstance } from "./NstInstance.sol";
 
 interface NstLike {
     function rely(address) external;
-    function deny(address) external;
+    function version() external view returns (string memory);
+    function getImplementation() external view returns (address);
 }
 
 interface NstJoinLike {
@@ -35,10 +36,14 @@ interface DaiNstLike {
 }
 
 library NstInit {
+
     function init(
         DssInstance memory dss,
         NstInstance memory instance
     ) internal {
+        require(keccak256(abi.encodePacked(NstLike(instance.nst).version())) == keccak256(abi.encodePacked("1")), "NstInit/version-does-not-match");
+        require(NstLike(instance.nst).getImplementation() == instance.nstImp, "NstInit/imp-does-not-match");
+
         require(NstJoinLike(instance.nstJoin).vat() == address(dss.vat), "NstInit/vat-does-not-match");
         require(NstJoinLike(instance.nstJoin).nst() == instance.nst, "NstInit/nst-does-not-match");
 
@@ -47,9 +52,9 @@ library NstInit {
         require(DaiNstLike(instance.daiNst).nstJoin() == instance.nstJoin, "NstInit/nstJoin-does-not-match");
 
         NstLike(instance.nst).rely(instance.nstJoin);
-        NstLike(instance.nst).deny(instance.owner);
 
         dss.chainlog.setAddress("NST",      instance.nst);
+        dss.chainlog.setAddress("NST_IMP",  instance.nstImp);
         dss.chainlog.setAddress("NST_JOIN", instance.nstJoin);
         dss.chainlog.setAddress("DAI_NST",  instance.daiNst);
     }
