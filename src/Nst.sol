@@ -64,6 +64,8 @@ contract Nst is UUPSUpgradeable {
     // --- Upgradability ---
 
     function initialize() initializer external {
+        __UUPSUpgradeable_init();
+
         wards[msg.sender] = 1;
         emit Rely(msg.sender);
     }
