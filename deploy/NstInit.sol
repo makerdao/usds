@@ -41,7 +41,7 @@ library NstInit {
         DssInstance memory dss,
         NstInstance memory instance
     ) internal {
-        require(keccak256(abi.encodePacked(NstLike(instance.nst).version())) == keccak256(abi.encodePacked("1")), "NstInit/version-does-not-match");
+        require(keccak256(bytes(NstLike(instance.nst).version())) == keccak256("1"), "NstInit/version-does-not-match");
         require(NstLike(instance.nst).getImplementation() == instance.nstImp, "NstInit/imp-does-not-match");
 
         require(NstJoinLike(instance.nstJoin).vat() == address(dss.vat), "NstInit/vat-does-not-match");
