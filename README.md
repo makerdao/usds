@@ -28,3 +28,8 @@ However, in practice, `NstJoin` acts the exact same way as the production `DaiJo
 
 It is a permissionless converter between `Dai` and `Nst` (both ways). Using the `public` functions of `NstJoin` and `DaiJoin` moves from one token to the other. The exchange rate is 1:1.
 It is just a "convenience" contract, users could still get the same outcome executing the separate methods in the `join`s or use any other converter implementation.
+
+## Sherlock Contest:
+
+You can find general (and particular for this repository) scope, definitions, rules, disclaimers and known issues that apply to the Sherlock contest [here](https://github.com/makerdao/sherlock-contest/blob/master/README.md).
+Content listed there should be regarded as if it was in this readme.
