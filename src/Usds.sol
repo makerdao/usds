@@ -33,7 +33,7 @@ contract Usds is UUPSUpgradeable {
     mapping (address => uint256) public wards;
 
     // --- ERC20 Data ---
-    string  public constant name     = "Sky USD";
+    string  public constant name     = "USDS Stablecoin";
     string  public constant symbol   = "USDS";
     string  public constant version  = "1";
     uint8   public constant decimals = 18;
