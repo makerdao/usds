@@ -14,8 +14,8 @@ contract UsdsJoinTest is DssTest {
     ChainlogAbstract constant chainLog = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
 
     VatAbstract vat;
-    Usds         usds;
-    UsdsJoin     usdsJoin;
+    Usds        usds;
+    UsdsJoin    usdsJoin;
 
     event Join(address indexed caller, address indexed usr, uint256 wad);
     event Exit(address indexed caller, address indexed usr, uint256 wad);
