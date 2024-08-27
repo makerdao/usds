@@ -58,12 +58,12 @@ contract UsdsTest is TokenFuzzTests {
 
         _token_ = address(usds);
         _contractName_ = "Usds";
-        _tokenName_ = "Sky USD";
+        _tokenName_ = "USDS Stablecoin";
         _symbol_ = "USDS";
     }
 
     function invariantMetadata() public view {
-        assertEq(usds.name(), "Sky USD");
+        assertEq(usds.name(), "USDS Stablecoin");
         assertEq(usds.symbol(), "USDS");
         assertEq(usds.version(), "1");
         assertEq(usds.decimals(), 18);
