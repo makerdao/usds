@@ -76,7 +76,7 @@ contract DaiUsdsTest is DssTest {
         emit DaiToUsds(address(this), receiver,  1_500 * WAD);
         daiUsds.daiToUsds(receiver, 1_500 * WAD);
         assertEq(dai.balanceOf(address(this)),   6_500 * WAD);
-        assertEq(dai.balanceOf(receiver),                 0);
+        assertEq(dai.balanceOf(receiver),                  0);
         assertEq(dai.totalSupply() - daiSup,     6_500 * WAD);
         assertEq(usds.balanceOf(address(this)),  2_000 * WAD);
         assertEq(usds.balanceOf(receiver),       1_500 * WAD);
