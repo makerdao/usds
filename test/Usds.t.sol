@@ -58,7 +58,7 @@ contract UsdsTest is TokenFuzzTests {
 
         _token_ = address(usds);
         _contractName_ = "Usds";
-        _tokenName_ ="Sky USD";
+        _tokenName_ = "Sky USD";
         _symbol_ = "USDS";
     }
 
