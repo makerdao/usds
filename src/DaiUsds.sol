@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-/// DaiNst.sol -- Dai/Nst Exchanger
+/// DaiUsds.sol -- Dai/Usds Exchanger
 
 // Copyright (C) 2023 Dai Foundation
 //
@@ -29,8 +29,8 @@ interface DaiJoinLike is JoinLike {
     function dai() external view returns (address);
 }
 
-interface NstJoinLike is JoinLike {
-    function nst() external view returns (address);
+interface UsdsJoinLike is JoinLike {
+    function usds() external view returns (address);
 }
 
 interface GemLike {
@@ -42,43 +42,43 @@ interface VatLike {
     function hope(address) external;
 }
 
-contract DaiNst {
-    DaiJoinLike public immutable daiJoin;
-    NstJoinLike public immutable nstJoin;
-    GemLike     public immutable dai;
-    GemLike     public immutable nst;
+contract DaiUsds {
+    DaiJoinLike  public immutable daiJoin;
+    UsdsJoinLike public immutable usdsJoin;
+    GemLike      public immutable dai;
+    GemLike      public immutable usds;
     
-    event DaiToNst(address indexed caller, address indexed usr, uint256 wad);
-    event NstToDai(address indexed caller, address indexed usr, uint256 wad);
+    event DaiToUsds(address indexed caller, address indexed usr, uint256 wad);
+    event UsdsToDai(address indexed caller, address indexed usr, uint256 wad);
 
-    constructor(address daiJoin_, address nstJoin_) {
-        daiJoin = DaiJoinLike(daiJoin_);
-        nstJoin = NstJoinLike(nstJoin_);
+    constructor(address daiJoin_, address usdsJoin_) {
+        daiJoin  = DaiJoinLike(daiJoin_);
+        usdsJoin = UsdsJoinLike(usdsJoin_);
 
         address vat = daiJoin.vat();
-        require(vat == nstJoin.vat(), "DaiNst/vat-not-same");
+        require(vat == usdsJoin.vat(), "DaiUsds/vat-not-same");
 
-        dai = GemLike(daiJoin.dai());
-        nst = GemLike(nstJoin.nst());
+        dai  = GemLike(daiJoin.dai());
+        usds = GemLike(usdsJoin.usds());
 
         dai.approve(address(daiJoin), type(uint256).max);
-        nst.approve(address(nstJoin), type(uint256).max);
+        usds.approve(address(usdsJoin), type(uint256).max);
 
         VatLike(vat).hope(address(daiJoin));
-        VatLike(vat).hope(address(nstJoin));
+        VatLike(vat).hope(address(usdsJoin));
     }
 
-    function daiToNst(address usr, uint256 wad) external {
+    function daiToUsds(address usr, uint256 wad) external {
         dai.transferFrom(msg.sender, address(this), wad);
         daiJoin.join(address(this), wad);
-        nstJoin.exit(usr, wad);
-        emit DaiToNst(msg.sender, usr, wad);
+        usdsJoin.exit(usr, wad);
+        emit DaiToUsds(msg.sender, usr, wad);
     }
 
-    function nstToDai(address usr, uint256 wad) external {
-        nst.transferFrom(msg.sender, address(this), wad);
-        nstJoin.join(address(this), wad);
+    function usdsToDai(address usr, uint256 wad) external {
+        usds.transferFrom(msg.sender, address(this), wad);
+        usdsJoin.join(address(this), wad);
         daiJoin.exit(usr, wad);
-        emit NstToDai(msg.sender, usr, wad);
+        emit UsdsToDai(msg.sender, usr, wad);
     }
 }

@@ -1,7 +1,7 @@
 pragma solidity ^0.8.21;
 
-import "../src/Nst.sol";
+import "../src/Usds.sol";
 
-contract DaiMock is Nst {
+contract DaiMock is Usds {
     
 }

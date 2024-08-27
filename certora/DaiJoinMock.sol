@@ -1,7 +1,7 @@
 pragma solidity ^0.8.21;
 
-import "../src/NstJoin.sol";
+import "../src/UsdsJoin.sol";
 
-contract DaiJoinMock is NstJoin {
-    constructor(address vat_, address dai_) NstJoin(vat_, dai_) {}
+contract DaiJoinMock is UsdsJoin {
+    constructor(address vat_, address dai_) UsdsJoin(vat_, dai_) {}
 }

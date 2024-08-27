@@ -21,12 +21,12 @@ import "dss-interfaces/Interfaces.sol";
 
 import { Upgrades } from "openzeppelin-foundry-upgrades/Upgrades.sol";
 
-import { NstInstance } from "deploy/NstInstance.sol";
-import { NstDeploy } from "deploy/NstDeploy.sol";
-import { NstInit } from "deploy/NstInit.sol";
+import { UsdsInstance } from "deploy/UsdsInstance.sol";
+import { UsdsDeploy } from "deploy/UsdsDeploy.sol";
+import { UsdsInit } from "deploy/UsdsInit.sol";
 
-import { Nst } from "src/Nst.sol";
-import { DaiNst } from "src/DaiNst.sol";
+import { Usds } from "src/Usds.sol";
+import { DaiUsds } from "src/DaiUsds.sol";
 
 contract DeploymentTest is DssTest {
     ChainlogAbstract constant chainLog = ChainlogAbstract(0xdA0Ab1e0017DEbCd72Be8599041a2aa3bA7e740F);
@@ -35,7 +35,7 @@ contract DeploymentTest is DssTest {
     DaiAbstract dai;
     address daiJoin;
 
-    NstInstance inst;
+    UsdsInstance inst;
 
     function setUp() public {
         vm.createSelectFork(vm.envString("ETH_RPC_URL"));
@@ -44,43 +44,43 @@ contract DeploymentTest is DssTest {
         daiJoin    = chainLog.getAddress("MCD_JOIN_DAI");
         dai        = DaiAbstract(chainLog.getAddress("MCD_DAI"));
 
-        inst = NstDeploy.deploy(address(this), pauseProxy, daiJoin);
+        inst = UsdsDeploy.deploy(address(this), pauseProxy, daiJoin);
     }
 
     function testSetUp() public {
         DssInstance memory dss = MCD.loadFromChainlog(address(chainLog));
 
-        assertEq(Nst(inst.nst).wards(pauseProxy), 1);
-        assertEq(Nst(inst.nst).wards(inst.nstJoin), 0);
-        assertEq(Upgrades.getImplementationAddress(inst.nst), inst.nstImp);
+        assertEq(Usds(inst.usds).wards(pauseProxy), 1);
+        assertEq(Usds(inst.usds).wards(inst.usdsJoin), 0);
+        assertEq(Upgrades.getImplementationAddress(inst.usds), inst.usdsImp);
 
         vm.startPrank(pauseProxy);
-        NstInit.init(dss, inst);
+        UsdsInit.init(dss, inst);
         vm.stopPrank();
 
-        assertEq(Nst(inst.nst).wards(pauseProxy), 1);
-        assertEq(Nst(inst.nst).wards(inst.nstJoin), 1);
+        assertEq(Usds(inst.usds).wards(pauseProxy), 1);
+        assertEq(Usds(inst.usds).wards(inst.usdsJoin), 1);
 
         deal(address(dai), address(this), 1000);
 
         assertEq(dai.balanceOf(address(this)), 1000);
-        assertEq(Nst(inst.nst).balanceOf(address(this)), 0);
+        assertEq(Usds(inst.usds).balanceOf(address(this)), 0);
 
-        dai.approve(inst.daiNst, 600);
-        DaiNst(inst.daiNst).daiToNst(address(this), 600);
+        dai.approve(inst.daiUsds, 600);
+        DaiUsds(inst.daiUsds).daiToUsds(address(this), 600);
 
         assertEq(dai.balanceOf(address(this)), 400);
-        assertEq(Nst(inst.nst).balanceOf(address(this)), 600);
+        assertEq(Usds(inst.usds).balanceOf(address(this)), 600);
 
-        Nst(inst.nst).approve(inst.daiNst, 400);
-        DaiNst(inst.daiNst).nstToDai(address(this), 400);
+        Usds(inst.usds).approve(inst.daiUsds, 400);
+        DaiUsds(inst.daiUsds).usdsToDai(address(this), 400);
 
         assertEq(dai.balanceOf(address(this)), 800);
-        assertEq(Nst(inst.nst).balanceOf(address(this)), 200);
+        assertEq(Usds(inst.usds).balanceOf(address(this)), 200);
 
-        assertEq(chainLog.getAddress("NST"), inst.nst);
-        assertEq(chainLog.getAddress("NST_IMP"), inst.nstImp);
-        assertEq(chainLog.getAddress("NST_JOIN"), inst.nstJoin);
-        assertEq(chainLog.getAddress("DAI_NST"), inst.daiNst);
+        assertEq(chainLog.getAddress("USDS"), inst.usds);
+        assertEq(chainLog.getAddress("USDS_IMP"), inst.usdsImp);
+        assertEq(chainLog.getAddress("USDS_JOIN"), inst.usdsJoin);
+        assertEq(chainLog.getAddress("DAI_USDS"), inst.daiUsds);
     }
 }

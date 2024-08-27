@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-/// Nst.sol -- Nst token
+/// Usds.sol -- Usds token
 
 // Copyright (C) 2017, 2018, 2019 dbrock, rain, mrchico
 // Copyright (C) 2023 Dai Foundation
@@ -29,12 +29,12 @@ interface IERC1271 {
     ) external view returns (bytes4);
 }
 
-contract Nst is UUPSUpgradeable {
+contract Usds is UUPSUpgradeable {
     mapping (address => uint256) public wards;
 
     // --- ERC20 Data ---
-    string  public constant name     = "Nst Stablecoin";
-    string  public constant symbol   = "NST";
+    string  public constant name     = "USDS Stablecoin";
+    string  public constant symbol   = "USDS";
     string  public constant version  = "1";
     uint8   public constant decimals = 18;
     uint256 public totalSupply;
@@ -53,7 +53,7 @@ contract Nst is UUPSUpgradeable {
     bytes32 public constant PERMIT_TYPEHASH = keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
 
     modifier auth {
-        require(wards[msg.sender] == 1, "Nst/not-authorized");
+        require(wards[msg.sender] == 1, "Usds/not-authorized");
         _;
     }
 
@@ -105,9 +105,9 @@ contract Nst is UUPSUpgradeable {
 
     // --- ERC20 Mutations ---
     function transfer(address to, uint256 value) external returns (bool) {
-        require(to != address(0) && to != address(this), "Nst/invalid-address");
+        require(to != address(0) && to != address(this), "Usds/invalid-address");
         uint256 balance = balanceOf[msg.sender];
-        require(balance >= value, "Nst/insufficient-balance");
+        require(balance >= value, "Usds/insufficient-balance");
 
         unchecked {
             balanceOf[msg.sender] = balance - value;
@@ -120,14 +120,14 @@ contract Nst is UUPSUpgradeable {
     }
 
     function transferFrom(address from, address to, uint256 value) external returns (bool) {
-        require(to != address(0) && to != address(this), "Nst/invalid-address");
+        require(to != address(0) && to != address(this), "Usds/invalid-address");
         uint256 balance = balanceOf[from];
-        require(balance >= value, "Nst/insufficient-balance");
+        require(balance >= value, "Usds/insufficient-balance");
 
         if (from != msg.sender) {
             uint256 allowed = allowance[from][msg.sender];
             if (allowed != type(uint256).max) {
-                require(allowed >= value, "Nst/insufficient-allowance");
+                require(allowed >= value, "Usds/insufficient-allowance");
 
                 unchecked {
                     allowance[from][msg.sender] = allowed - value;
@@ -155,7 +155,7 @@ contract Nst is UUPSUpgradeable {
 
     // --- Mint/Burn ---
     function mint(address to, uint256 value) external auth {
-        require(to != address(0) && to != address(this), "Nst/invalid-address");
+        require(to != address(0) && to != address(this), "Usds/invalid-address");
         unchecked {
             balanceOf[to] = balanceOf[to] + value; // note: we don't need an overflow check here b/c balanceOf[to] <= totalSupply and there is an overflow check below
         }
@@ -166,12 +166,12 @@ contract Nst is UUPSUpgradeable {
 
     function burn(address from, uint256 value) external {
         uint256 balance = balanceOf[from];
-        require(balance >= value, "Nst/insufficient-balance");
+        require(balance >= value, "Usds/insufficient-balance");
 
         if (from != msg.sender) {
             uint256 allowed = allowance[from][msg.sender];
             if (allowed != type(uint256).max) {
-                require(allowed >= value, "Nst/insufficient-allowance");
+                require(allowed >= value, "Usds/insufficient-allowance");
 
                 unchecked {
                     allowance[from][msg.sender] = allowed - value;
@@ -224,8 +224,8 @@ contract Nst is UUPSUpgradeable {
         uint256 deadline,
         bytes memory signature
     ) public {
-        require(block.timestamp <= deadline, "Nst/permit-expired");
-        require(owner != address(0), "Nst/invalid-owner");
+        require(block.timestamp <= deadline, "Usds/permit-expired");
+        require(owner != address(0), "Usds/invalid-owner");
 
         uint256 nonce;
         unchecked { nonce = nonces[owner]++; }
@@ -244,7 +244,7 @@ contract Nst is UUPSUpgradeable {
                 ))
             ));
 
-        require(_isValidSignature(owner, digest, signature), "Nst/invalid-permit");
+        require(_isValidSignature(owner, digest, signature), "Usds/invalid-permit");
 
         allowance[owner][spender] = value;
         emit Approval(owner, spender, value);

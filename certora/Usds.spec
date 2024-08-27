@@ -1,4 +1,4 @@
-// Nst.spec
+// Usds.spec
 
 using Auxiliar as aux;
 using SignerMock as signer;
@@ -13,7 +13,6 @@ methods {
     function balanceOf(address) external returns (uint256) envfree;
     function allowance(address, address) external returns (uint256) envfree;
     function nonces(address) external returns (uint256) envfree;
-    function deploymentChainId() external returns (uint256) envfree;
     function DOMAIN_SEPARATOR() external returns (bytes32) envfree;
     function PERMIT_TYPEHASH() external returns (bytes32) envfree;
     function aux.call_ecrecover(bytes32, uint8, bytes32, bytes32) external returns (address) envfree;
@@ -32,7 +31,10 @@ hook Sstore balanceOf[KEY address a] uint256 balance (uint256 old_balance) {
     havoc balanceSum assuming balanceSum@new() == balanceSum@old() + balance - old_balance && balanceSum@new() >= 0;
 }
 
-invariant balanceSum_equals_totalSupply() balanceSum() == to_mathint(totalSupply());
+invariant balanceSum_equals_totalSupply() balanceSum() == to_mathint(totalSupply())
+            filtered {
+                m -> m.selector != sig:upgradeToAndCall(address, bytes).selector
+            }
 
 // Verify correct storage changes for non reverting rely
 rule rely(address usr) {
