@@ -6,9 +6,9 @@ import "token-tests/TokenFuzzTests.sol";
 import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import { Upgrades, Options } from "openzeppelin-foundry-upgrades/Upgrades.sol";
 
-import { Nst, UUPSUpgradeable, Initializable, ERC1967Utils } from "src/Nst.sol";
+import { Usds, UUPSUpgradeable, Initializable, ERC1967Utils } from "src/Usds.sol";
 
-contract Nst2 is UUPSUpgradeable {
+contract Usds2 is UUPSUpgradeable {
     mapping (address => uint256) public wards;
     string  public constant version  = "2";
 
@@ -20,7 +20,7 @@ contract Nst2 is UUPSUpgradeable {
     event UpgradedTo(string version);
 
     modifier auth {
-        require(wards[msg.sender] == 1, "Nst/not-authorized");
+        require(wards[msg.sender] == 1, "Usds/not-authorized");
         _;
     }
 
@@ -39,8 +39,8 @@ contract Nst2 is UUPSUpgradeable {
     }
 }
 
-contract NstTest is TokenFuzzTests {
-    Nst nst;
+contract UsdsTest is TokenFuzzTests {
+    Usds usds;
     bool validate;
 
     event UpgradedTo(string version);
@@ -48,25 +48,25 @@ contract NstTest is TokenFuzzTests {
     function setUp() public {
         validate = vm.envOr("VALIDATE", false);
 
-        address imp = address(new Nst());
+        address imp = address(new Usds());
         vm.expectEmit(true, true, true, true);
         emit Rely(address(this));
-        nst = Nst(address(new ERC1967Proxy(imp, abi.encodeCall(Nst.initialize, ()))));
-        assertEq(nst.version(), "1");
-        assertEq(nst.wards(address(this)), 1);
-        assertEq(nst.getImplementation(), imp);
+        usds = Usds(address(new ERC1967Proxy(imp, abi.encodeCall(Usds.initialize, ()))));
+        assertEq(usds.version(), "1");
+        assertEq(usds.wards(address(this)), 1);
+        assertEq(usds.getImplementation(), imp);
 
-        _token_ = address(nst);
-        _contractName_ = "Nst";
-        _tokenName_ ="Nst Stablecoin";
-        _symbol_ = "NST";
+        _token_ = address(usds);
+        _contractName_ = "Usds";
+        _tokenName_ ="Sky USD";
+        _symbol_ = "USDS";
     }
 
     function invariantMetadata() public view {
-        assertEq(nst.name(), "Nst Stablecoin");
-        assertEq(nst.symbol(), "NST");
-        assertEq(nst.version(), "1");
-        assertEq(nst.decimals(), 18);
+        assertEq(usds.name(), "Sky USD");
+        assertEq(usds.symbol(), "USDS");
+        assertEq(usds.version(), "1");
+        assertEq(usds.decimals(), 18);
     }
 
     function testDeployWithUpgradesLib() public {
@@ -80,69 +80,69 @@ contract NstTest is TokenFuzzTests {
         vm.expectEmit(true, true, true, true);
         emit Rely(address(this));
         address proxy = Upgrades.deployUUPSProxy(
-            "out/Nst.sol/Nst.json",
-            abi.encodeCall(Nst.initialize, ()),
+            "out/Usds.sol/Usds.json",
+            abi.encodeCall(Usds.initialize, ()),
             opts
         );
-        assertEq(Nst(proxy).version(), "1");
-        assertEq(Nst(proxy).wards(address(this)), 1);
+        assertEq(Usds(proxy).version(), "1");
+        assertEq(Usds(proxy).wards(address(this)), 1);
     }
 
     function testUpgrade() public {
-        address implementation1 = nst.getImplementation();
+        address implementation1 = usds.getImplementation();
 
-        address newImpl = address(new Nst2());
+        address newImpl = address(new Usds2());
         vm.expectEmit(true, true, true, true);
         emit UpgradedTo("2");
-        nst.upgradeToAndCall(newImpl, abi.encodeCall(Nst2.reinitialize, ()));
+        usds.upgradeToAndCall(newImpl, abi.encodeCall(Usds2.reinitialize, ()));
 
-        address implementation2 = nst.getImplementation();
+        address implementation2 = usds.getImplementation();
         assertEq(implementation2, newImpl);
         assertTrue(implementation2 != implementation1);
-        assertEq(nst.version(), "2");
-        assertEq(nst.wards(address(this)), 1); // still a ward
+        assertEq(usds.version(), "2");
+        assertEq(usds.wards(address(this)), 1); // still a ward
     }
 
     function testUpgradeWithUpgradesLib() public {
-        address implementation1 = nst.getImplementation();
+        address implementation1 = usds.getImplementation();
 
         Options memory opts;
         if (!validate) {
             opts.unsafeSkipAllChecks = true;
         } else {
-            opts.referenceContract = "out/Nst.sol/Nst.json";
+            opts.referenceContract = "out/Usds.sol/Usds.json";
             opts.unsafeAllow = 'constructor';
         }
 
         vm.expectEmit(true, true, true, true);
         emit UpgradedTo("2");
         Upgrades.upgradeProxy(
-            address(nst),
-            "out/Nst.t.sol/Nst2.json",
-            abi.encodeCall(Nst2.reinitialize, ()),
+            address(usds),
+            "out/Usds.t.sol/Usds2.json",
+            abi.encodeCall(Usds2.reinitialize, ()),
             opts
         );
 
-        address implementation2 = nst.getImplementation();
+        address implementation2 = usds.getImplementation();
         assertTrue(implementation1 != implementation2);
-        assertEq(nst.version(), "2");
-        assertEq(nst.wards(address(this)), 1); // still a ward
+        assertEq(usds.version(), "2");
+        assertEq(usds.wards(address(this)), 1); // still a ward
     }
 
     function testUpgradeUnauthed() public {
-        address newImpl = address(new Nst2());
-        vm.expectRevert("Nst/not-authorized");
-        vm.prank(address(0x123)); nst.upgradeToAndCall(newImpl, abi.encodeCall(Nst2.reinitialize, ()));
+        address newImpl = address(new Usds2());
+        vm.expectRevert("Usds/not-authorized");
+        vm.prank(address(0x123)); usds.upgradeToAndCall(newImpl, abi.encodeCall(Usds2.reinitialize, ()));
     }
 
     function testInitializeAgain() public {
         vm.expectRevert(Initializable.InvalidInitialization.selector);
-        nst.initialize();
+        usds.initialize();
     }
 
     function testInitializeDirectly() public {
-        address implementation = nst.getImplementation();
+        address implementation = usds.getImplementation();
         vm.expectRevert(Initializable.InvalidInitialization.selector);
-        Nst(implementation).initialize();
+        Usds(implementation).initialize();
     }
 }

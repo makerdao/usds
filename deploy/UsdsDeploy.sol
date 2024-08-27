@@ -19,32 +19,32 @@ pragma solidity ^0.8.21;
 import { ScriptTools } from "dss-test/ScriptTools.sol";
 import { ERC1967Proxy } from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-import { Nst } from "src/Nst.sol";
-import { NstJoin } from "src/NstJoin.sol";
-import { DaiNst } from "src/DaiNst.sol";
+import { Usds } from "src/Usds.sol";
+import { UsdsJoin } from "src/UsdsJoin.sol";
+import { DaiUsds } from "src/DaiUsds.sol";
 
-import { NstInstance } from "./NstInstance.sol";
+import { UsdsInstance } from "./UsdsInstance.sol";
 
 interface DaiJoinLike {
     function vat() external view returns (address);
 }
 
-library NstDeploy {
+library UsdsDeploy {
     function deploy(
         address deployer,
         address owner,
         address daiJoin
-    ) internal returns (NstInstance memory instance) {
-        address _nstImp = address(new Nst());
-        address _nst = address((new ERC1967Proxy(_nstImp, abi.encodeCall(Nst.initialize, ()))));
-        ScriptTools.switchOwner(_nst, deployer, owner);
+    ) internal returns (UsdsInstance memory instance) {
+        address _usdsImp = address(new Usds());
+        address _usds = address((new ERC1967Proxy(_usdsImp, abi.encodeCall(Usds.initialize, ()))));
+        ScriptTools.switchOwner(_usds, deployer, owner);
 
-        address _nstJoin = address(new NstJoin(DaiJoinLike(daiJoin).vat(), _nst));
-        address _daiNst = address(new DaiNst(daiJoin, _nstJoin));
+        address _usdsJoin = address(new UsdsJoin(DaiJoinLike(daiJoin).vat(), _usds));
+        address _daiUsds = address(new DaiUsds(daiJoin, _usdsJoin));
 
-        instance.nst     = _nst;
-        instance.nstImp  = _nstImp;
-        instance.nstJoin = _nstJoin;
-        instance.daiNst  = _daiNst;
+        instance.usds     = _usds;
+        instance.usdsImp  = _usdsImp;
+        instance.usdsJoin = _usdsJoin;
+        instance.daiUsds  = _daiUsds;
     }
 }

@@ -16,9 +16,9 @@
 
 pragma solidity >=0.8.0;
 
-struct NstInstance {
-    address nst;
-    address nstImp;
-    address nstJoin;
-    address daiNst;
+struct UsdsInstance {
+    address usds;
+    address usdsImp;
+    address usdsJoin;
+    address daiUsds;
 }

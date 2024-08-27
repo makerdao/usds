@@ -17,45 +17,45 @@
 pragma solidity >=0.8.0;
 
 import { DssInstance } from "dss-test/MCD.sol";
-import { NstInstance } from "./NstInstance.sol";
+import { UsdsInstance } from "./UsdsInstance.sol";
 
-interface NstLike {
+interface UsdsLike {
     function rely(address) external;
     function version() external view returns (string memory);
     function getImplementation() external view returns (address);
 }
 
-interface NstJoinLike {
-    function nst() external view returns (address);
+interface UsdsJoinLike {
+    function usds() external view returns (address);
     function vat() external view returns (address);
 }
 
-interface DaiNstLike {
+interface DaiUsdsLike {
     function daiJoin() external view returns (address);
-    function nstJoin() external view returns (address);
+    function usdsJoin() external view returns (address);
 }
 
-library NstInit {
+library UsdsInit {
 
     function init(
         DssInstance memory dss,
-        NstInstance memory instance
+        UsdsInstance memory instance
     ) internal {
-        require(keccak256(bytes(NstLike(instance.nst).version())) == keccak256("1"), "NstInit/version-does-not-match");
-        require(NstLike(instance.nst).getImplementation() == instance.nstImp, "NstInit/imp-does-not-match");
+        require(keccak256(bytes(UsdsLike(instance.usds).version())) == keccak256("1"), "UsdsInit/version-does-not-match");
+        require(UsdsLike(instance.usds).getImplementation() == instance.usdsImp, "UsdsInit/imp-does-not-match");
 
-        require(NstJoinLike(instance.nstJoin).vat() == address(dss.vat), "NstInit/vat-does-not-match");
-        require(NstJoinLike(instance.nstJoin).nst() == instance.nst, "NstInit/nst-does-not-match");
+        require(UsdsJoinLike(instance.usdsJoin).vat() == address(dss.vat), "UsdsInit/vat-does-not-match");
+        require(UsdsJoinLike(instance.usdsJoin).usds() == instance.usds, "UsdsInit/usds-does-not-match");
 
         address daiJoin = dss.chainlog.getAddress("MCD_JOIN_DAI");
-        require(DaiNstLike(instance.daiNst).daiJoin() == daiJoin, "NstInit/daiJoin-does-not-match");
-        require(DaiNstLike(instance.daiNst).nstJoin() == instance.nstJoin, "NstInit/nstJoin-does-not-match");
+        require(DaiUsdsLike(instance.daiUsds).daiJoin() == daiJoin, "UsdsInit/daiJoin-does-not-match");
+        require(DaiUsdsLike(instance.daiUsds).usdsJoin() == instance.usdsJoin, "UsdsInit/usdsJoin-does-not-match");
 
-        NstLike(instance.nst).rely(instance.nstJoin);
+        UsdsLike(instance.usds).rely(instance.usdsJoin);
 
-        dss.chainlog.setAddress("NST",      instance.nst);
-        dss.chainlog.setAddress("NST_IMP",  instance.nstImp);
-        dss.chainlog.setAddress("NST_JOIN", instance.nstJoin);
-        dss.chainlog.setAddress("DAI_NST",  instance.daiNst);
+        dss.chainlog.setAddress("USDS",      instance.usds);
+        dss.chainlog.setAddress("USDS_IMP",  instance.usdsImp);
+        dss.chainlog.setAddress("USDS_JOIN", instance.usdsJoin);
+        dss.chainlog.setAddress("DAI_USDS",  instance.daiUsds);
     }
 }
