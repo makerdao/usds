@@ -23,7 +23,7 @@ import { Usds } from "src/Usds.sol";
 import { UsdsJoin } from "src/UsdsJoin.sol";
 import { DaiUsds } from "src/DaiUsds.sol";
 
-import { UsdsInstance } from "./UsdsInstance.sol";
+import { UsdsInstance, UsdsL2Instance } from "./UsdsInstance.sol";
 
 interface DaiJoinLike {
     function vat() external view returns (address);
@@ -46,5 +46,17 @@ library UsdsDeploy {
         instance.usdsImp  = _usdsImp;
         instance.usdsJoin = _usdsJoin;
         instance.daiUsds  = _daiUsds;
+    }
+
+    function deployL2(
+        address deployer,
+        address owner
+    ) internal returns (UsdsL2Instance memory instance) {
+        address _usdsImp = address(new Usds());
+        address _usds = address((new ERC1967Proxy(_usdsImp, abi.encodeCall(Usds.initialize, ()))));
+        ScriptTools.switchOwner(_usds, deployer, owner);
+
+        instance.usds     = _usds;
+        instance.usdsImp  = _usdsImp;
     }
 }
