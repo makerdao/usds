@@ -22,3 +22,8 @@ struct UsdsInstance {
     address usdsJoin;
     address daiUsds;
 }
+
+struct UsdsL2Instance {
+    address usds;
+    address usdsImp;
+}
